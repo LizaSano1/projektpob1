@@ -92,3 +92,25 @@ class TestAppIntegration(TestCase):
         response = self.client.get('/users')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, [])
+    
+        payload = {"name": "John", "lastname": "Doe"}
+        response = self.client.post('/users', json=payload)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {"message": "User created successfully"})
+        self.assertEqual(users, [{"id": 1, "name": "John", "lastname": "Doe"}])
+
+        response = self.client.get('/users/1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"id": 1, "name": "John", "lastname": "Doe"})
+
+        response = self.client.patch('/users/1', json={"name": "Johnny"})
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(users, [{"id": 1, "name": "Johnny", "lastname": "Doe"}])
+
+        response = self.client.put('/users/1', json={"name": "John", "lastname": "Doe Jr."})
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(users, [{"id": 1, "name": "John", "lastname": "Doe Jr."}])
+
+        response = self.client.delete('/users/1')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(users, [])
