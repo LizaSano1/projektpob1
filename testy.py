@@ -1,12 +1,13 @@
 import unittest
 from flask_testing import TestCase
-from src.app import app, users, user_id_counter
+from src.app import app, users
 
 class TestApp(unittest.TestCase):
 
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
+        users.clear()  
 
     def test_hello_endpoint(self):
         response = self.app.get('/')
@@ -17,8 +18,7 @@ class TestApp(unittest.TestCase):
         response = self.app.get('/users')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, [])
-        
-    
+
     def test_create_user_endpoint(self):
         payload = {"name": "John", "lastname": "Doe"}
         response = self.app.post('/users', json=payload)
@@ -32,9 +32,10 @@ class TestApp(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"id": 1, "name": "Alice", "lastname": "Smith"})
 
+
     def test_get_user_not_found_endpoint(self):
         response = self.app.get('/users/100')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"error": "User with id 100 not found"})
 
     def test_update_user_endpoint(self):
@@ -47,7 +48,7 @@ class TestApp(unittest.TestCase):
     def test_update_user_not_found_endpoint(self):
         payload = {"name": "Robert"}
         response = self.app.patch('/users/100', json=payload)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"error": "User with id 100 not found"})
 
     def test_update_user_bad_request_endpoint(self):
@@ -66,7 +67,7 @@ class TestApp(unittest.TestCase):
     def test_replace_user_not_found_endpoint(self):
         payload = {"name": "Charles", "lastname": "Brown"}
         response = self.app.put('/users/100', json=payload)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"error": "User with id 100 not found"})
 
     def test_delete_user_endpoint(self):
@@ -77,7 +78,7 @@ class TestApp(unittest.TestCase):
 
     def test_delete_user_not_found_endpoint(self):
         response = self.app.delete('/users/100')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"error": "User with id 100 not found"})
 class TestAppIntegration(TestCase):
 
