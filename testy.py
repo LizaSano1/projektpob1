@@ -114,3 +114,9 @@ class TestAppIntegration(TestCase):
         response = self.client.delete('/users/1')
         self.assertEqual(response.status_code, 204)
         self.assertEqual(users, [])
+        
+        
+        
+    
+if __name__ == '__main__':
+    unittest.main()
