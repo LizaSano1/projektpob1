@@ -79,3 +79,16 @@ class TestApp(unittest.TestCase):
         response = self.app.delete('/users/100')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {"error": "User with id 100 not found"})
+class TestAppIntegration(TestCase):
+
+    def create_app(self):
+        return app
+
+    def test_integration(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.decode(), 'Hello, this is an HTTP/1.1 server!')
+
+        response = self.client.get('/users')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, [])
